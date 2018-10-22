@@ -53,12 +53,12 @@ alias mountfmt="mount | column -t | sort"
 
 # upload to https://0x0.st
 0x0 () {
-  echo ">>  $(curl -s -F "file=@$1" "https://0x0.st")"
+  echo ">>  $(curl -s --fail -F "file=@$1" "https://0x0.st" || echo "error uploading $1")"
 }
 
 # config management with git
 dotconf () {
-  local cdir="$HOME/.cfg"
+  local cdir="$HOME/.dotconf"
 
   [[ -d $cdir ]] || mkdir -p $cdir
   [[ -f $cdir/HEAD ]] || git init --bare $cdir
