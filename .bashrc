@@ -1,3 +1,7 @@
+#################
+# Bash settings #
+#################
+
 # Don't do anything, if not interactive
 case $- in
   *i*) ;;
@@ -22,7 +26,11 @@ HISTCONTROL=ignoreboth
 HISTSIZE=10000
 HISTFILESIZE=20000
 
-# Prompt
+
+##########
+# Prompt #
+##########
+
 pwd_abbr () {
   echo "$(\
     p="${PWD#${HOME}}"; \
@@ -48,7 +56,7 @@ exit_color () {
 }
 
 #    reset exit code          host/user   +      pwd              $
-PS1='\e[0m[$(exit_color)] \e[32m\h/\u\e[0m+\e[34m$(pwd_abbr)\e[00m$ '
+PS1='\e[0m[$(exit_color)] \e[32m\h\e[0m/\e[96m\u\e[0m:\e[95m$(pwd_abbr)\e[00m$ '
 
 
 ###########
