@@ -17,13 +17,14 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# check terminal dimensions after each command
+# shopt
 shopt -s autocd
 shopt -s checkwinsize
+shopt -s histappend
+shopt -s dotglob
+shopt -s globstar
 
 # history settings
-shopt -s histappend
-shopt -s hist_ignore_dups
 HISTCONTROL=ignoreboth
 HISTSIZE=10000
 SAVEHIST=10000
