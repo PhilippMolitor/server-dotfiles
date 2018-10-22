@@ -9,11 +9,8 @@ set ignorecase
 set incsearch
 syntax on
 
-" syntax highlighting
-highlight Comment cterm=italic
-highlight Constant cterm=italic
-highlight Special cterm=italic
-highlight PreProc cterm=italic
+" colorscheme
+colorscheme slate
 
 " tabs
 set softtabstop=2
