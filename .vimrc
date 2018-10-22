@@ -38,5 +38,5 @@ command W :execute ':silent w !sudo tee % > /dev/null' | :edit!
 autocmd BufReadPost *
   \ if line("'\"") >= 1 && line("'\"") <= line("$") |
   \   exe "normal! g`\"" |
-\ endif
+  \ endif
 
