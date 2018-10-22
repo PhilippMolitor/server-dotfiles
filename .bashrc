@@ -31,32 +31,53 @@ HISTFILESIZE=20000
 # Prompt #
 ##########
 
-pwd_abbr () {
-  echo "$(\
-    p="${PWD#${HOME}}"; \
-    [[ "${PWD}" != "${p}" ]] && printf "~"; \
-    
-    IFS=/; \
-    for q in ${p:1}; do \
-      [[ "${q:0:1}" == "." ]] && printf "/${q:0:2}" || printf "/${q:0:1}"; \
-    done; \
-    printf "${q:1}" \
-  )"
-}
+PROMPT_COMMAND=__render_prompt
 
-exit_color () {
+__render_prompt () {
   local ecode="$?"
   local fmtcode="$(printf "%03d" "$ecode")"
 
+  # reset
+  PS1='\[\e[0m\]'
+  
+  # exit code
+  PS1+='['
   if [[ "$ecode" == "0" ]]; then
-    echo -ne "\e[32m \u2713 \e[0m"
+    PS1+='\[\033[32m\]'
+    PS1+=$' \xe2\x9c\x93 '
   else
-    echo -ne "\e[31m$fmtcode\e[0m"
+    PS1+='\[\033[31m\]'
+    PS1+="$fmtcode"
+  fi
+  PS1+='\[\033[0m\]] '
+
+  # hostname/user:
+  PS1+='\[\e[32m\]\h\[\e[0m\]'
+  PS1+='/'
+  PS1+='\[\e[96m\]\u\[\e[0m\]'
+  PS1+=':'
+
+  # pwd (abbreviated)
+  PS1+="\[\e[95m\]"
+  PS1+="$(
+    p="${PWD#${HOME}}";
+    [[ "${PWD}" != "${p}" ]] && printf "~";
+
+    IFS=/;
+    for d in ${p:1}; do
+      [[ "${d:0:1}" == "." ]] && printf "/${d:0:2}" || printf "/${d:0:1}";
+    done;
+    printf "${d:1}"
+  )"
+  PS1+='\[\e[00m\]'
+
+  # prompt
+  if [ "$UID" -eq "0" ]; then
+    PS1+='# '
+  else
+    PS1+='$ '
   fi
 }
-
-#    reset exit code          host/user   +      pwd              $
-PS1='\e[0m[$(exit_color)] \e[32m\h\e[0m/\e[96m\u\e[0m:\e[95m$(pwd_abbr)\e[00m$ '
 
 
 ###########
