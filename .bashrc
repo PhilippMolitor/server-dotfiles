@@ -2,13 +2,13 @@
 # Bash settings #
 #################
 
-# Don't do anything, if not interactive
+# stop if non-interactive
 case $- in
   *i*) ;;
     *) return;;
 esac
 
-# Completion
+# load bash completion
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
     source /usr/share/bash-completion/bash_completion
@@ -17,14 +17,16 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# Always check terminal dimensions
+# check terminal dimensions after each command
+shopt -s autocd
 shopt -s checkwinsize
 
-# History settings
+# history settings
 shopt -s histappend
+shopt -s hist_ignore_dups
 HISTCONTROL=ignoreboth
 HISTSIZE=10000
-HISTFILESIZE=20000
+SAVEHIST=10000
 
 
 ##########
@@ -60,14 +62,16 @@ __render_prompt () {
   # pwd (abbreviated)
   PS1+="\[\e[95m\]"
   PS1+="$(
-    p="${PWD#${HOME}}";
-    [[ "${PWD}" != "${p}" ]] && printf "~";
+    p="${PWD#${HOME}}"
+    [[ "${PWD}" != "${p}" ]] && printf "~"
 
-    IFS=/;
+    IFS=/
+
     for d in ${p:1}; do
-      [[ "${d:0:1}" == "." ]] && printf "/${d:0:2}" || printf "/${d:0:1}";
-    done;
-    printf "${d:1}"
+      [[ "${d:0:1}" == "." ]] && printf "/${d:0:2}" || printf "/${d:0:1}"
+    done
+
+    [[ "${d:0:1}" == "." ]] && printf "${d:2}" || printf "${d:1}"
   )"
   PS1+='\[\e[00m\]'
 
