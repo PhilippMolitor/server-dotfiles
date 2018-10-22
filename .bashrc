@@ -24,10 +24,31 @@ HISTFILESIZE=20000
 
 # Prompt
 pwd_abbr () {
-  echo "$(p="${PWD#${HOME}}"; [ "${PWD}" != "${p}" ] && printf "~";IFS=/; for q in ${p:1}; do printf /${q:0:1}; done; printf "${q:1}")"
+  echo "$(\
+    p="${PWD#${HOME}}"; \
+    [[ "${PWD}" != "${p}" ]] && printf "~"; \
+    
+    IFS=/; \
+    for q in ${p:1}; do \
+      [[ "${q:0:1}" == "." ]] && printf "/${q:0:2}" || printf "/${q:0:1}"; \
+    done; \
+    printf "${q:1}" \
+  )"
 }
 
-PS1='($?) \[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]$(pwd_abbr)\[\033[00m\]\$ '
+exit_color () {
+  local ecode="$?"
+  local fmtcode="$(printf "%03d" "$ecode")"
+
+  if [[ "$ecode" == "0" ]]; then
+    echo -ne "\e[32m \u2713 \e[0m"
+  else
+    echo -ne "\e[31m$fmtcode\e[0m"
+  fi
+}
+
+#    reset exit code          host/user   +      pwd              $
+PS1='\e[0m[$(exit_color)] \e[32m\h/\u\e[0m+\e[34m$(pwd_abbr)\e[00m$ '
 
 
 ###########
