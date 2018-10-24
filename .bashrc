@@ -121,3 +121,14 @@ dotconf () {
   git --git-dir=$cdir --work-tree=$HOME/ "$@"
 }
 
+
+#################
+# PATH variable #
+#################
+
+PRIVATE_BIN_PATH="${HOME}/bin"
+
+if [[ -d $PRIVATE_BIN_PATH ]] && [[ ":$PATH:" != *":$PRIVATE_BIN_PATH:"* ]]; then
+  export PATH="${PRIVATE_BIN_PATH}:${PATH}"
+fi
+
