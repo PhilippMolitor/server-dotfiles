@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+import os
+import sys
+import re
+
+
+# variables
+SSH_PATH='{}/.ssh'.format(os.getenv('HOME'))
+AUTHORIZED_KEYS_FILE='{}/authorized_keys'.format(SSH_PATH)
+GITHUB_USERS=[]
+SSH_KEYS=[]
+RE_VALID_USER=re.compile(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$", re.IGNORECASE)
+
+# log to terminal
+def log(text, error=False):
+    if error:
+        print('[\033[91mx\033[0m] {}'.format(text))
+    else:
+        print('[\033[92m+\033[0m] {}'.format(text))
+
+# get a list of keys for a github user
+def fetch_user_keys(username):
+    pass
+
+
+# parse the commandlin, re.IGNORECASEe
+if len(sys.argv) >= 2:
+    for i in range(1, len(sys.argv)):
+        user = sys.argv[i]
+
+        if RE_VALID_USER.match(user):
+            log('user "{}" will be added'.format(user))
+            GITHUB_USERS.append(user)
+        else:
+            log('invalid user "{}": will not be added'.format(user), error=True)
+else:
+    log('please supply a list of users to be added to the authorized_keys list!', error=True)
+    exit(1)
+
+# gather keys for each user
+# TODO
+
+# append all gathered keys to the authorized_keys file
+# TODO
+
