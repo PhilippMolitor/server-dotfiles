@@ -2,6 +2,8 @@
 import os
 import sys
 import re
+import urllib.request
+import json
 
 
 # variables
@@ -20,8 +22,26 @@ def log(text, error=False):
 
 # get a list of keys for a github user
 def fetch_user_keys(username):
-    pass
+    keys = []
 
+    try:
+        with urllib.request.urlopen('https://api.github.com/users/{}/keys'.format(username)) as f:
+            data = json.loads(f.read().decode('utf-8'))
+            if len(data) >= 1:
+                for key in data:
+                    try:
+                        keys.append(key['key'])
+                    except:
+                        pass
+            else:
+                raise Exception('user "{}" has no public keys!'.format(username))
+    except:
+        raise Exception('failed to fetch data for user "{}"!'.format(username))
+
+    if len(keys) < 1:
+        raise Exception('error looking up user "{}"!'.format(username))
+
+    return keys
 
 # parse the commandlin, re.IGNORECASEe
 if len(sys.argv) >= 2:
@@ -29,7 +49,6 @@ if len(sys.argv) >= 2:
         user = sys.argv[i]
 
         if RE_VALID_USER.match(user):
-            log('user "{}" will be added'.format(user))
             GITHUB_USERS.append(user)
         else:
             log('invalid user "{}": will not be added'.format(user), error=True)
@@ -38,8 +57,16 @@ else:
     exit(1)
 
 # gather keys for each user
-# TODO
+for u in GITHUB_USERS:
+    try:
+        keyset = fetch_user_keys(u)
+        if len(keyset) > 0:
+            for key in keyset:
+                SSH_KEYS.append(key)
+            log('fetched {} keys for user "{}"'.format(len(keyset), u))
+    except Exception as e:
+        log(str(e), error=True)
 
 # append all gathered keys to the authorized_keys file
-# TODO
+
 
