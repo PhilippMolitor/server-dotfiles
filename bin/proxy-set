@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+if [[ $UID -ne 0 ]]; then
+  echo "trying to run with sudo..."
+  sudo env "PATH=$PATH" "$0" && exit 0 || exit 1
+fi
+
+install_to_env () {
+  local proxy="$1"
+  local out_file="/etc/environment"
+
+  if [[ ! -f $out_file ]]; then
+    out_file="/etc/profile"
+  fi
+
+  # append mode
+  cat <<EOF >> $out_file
+HTTP_PROXY="$proxy"
+HTTPS_PROXY="$proxy"
+EOF
+}
+
+install_to_apt() {
+  local proxy="$1"
+  # overwrite mode
+  cat <<EOF > /etc/apt/apt.conf.d/00proxy
+Acquire::ftp::Proxy "$proxy";
+Acquire::http::Proxy "$proxy";
+Acquire::https::Proxy "$proxy";
+EOF
+}
+
+main () {
+  read -p "> proxy URL: " proxy
+  read -p "> is \"$proxy\" correct? [y/N]: " -n 1 -r
+  echo
+
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "> setting proxy..."
+
+    # set environment variables
+    install_to_env "$proxy"
+  
+    # set apt proxy, if apt is installed
+    if [[ -d /etc/apt ]]; then
+      echo "> setting APT proxy..."
+      install_to_apt "$proxy"
+    fi
+  fi
+}
+
+main "$1"
+
