@@ -98,7 +98,7 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 # in case someone fucked up again... (me)
-alias fuck='sudo $(fc -ln -1)'
+alias fuck='sudo env "PATH=$PATH" $(fc -ln -1)'
 
 # list all currently listening tcp sockets
 alias lssockets='ss -nrlpt'
