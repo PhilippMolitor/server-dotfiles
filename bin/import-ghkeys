@@ -100,8 +100,12 @@ while not go:
 
 # check for .ssh directory
 if not os.path.exists(SSH_PATH):
-    os.makedirs(SSH_PATH)
-    log('created directory "{}"'.format(SSH_PATH), type='info')
+    try:
+        os.makedirs(SSH_PATH)
+        log('created directory "{}"'.format(SSH_PATH), type='info')
+    except:
+        log('cannot create directory "{}"!'.format(SSH_PATH), type='info')
+        exit(4)
 
 # append all gathered keys to the authorized_keys file
 log('installing keys...', type='info')
@@ -117,5 +121,5 @@ try:
     log('done!')
 except:
     log('cannot write to file!', type='error')
-    exit(4)
+    exit(5)
 
