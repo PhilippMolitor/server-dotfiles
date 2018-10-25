@@ -23,7 +23,7 @@ EOF
 install_to_apt() {
   local proxy="$1"
   # overwrite mode
-  cat <<EOF > /etc/apt/apt.conf.d/00proxy
+  cat <<EOF > /etc/apt/apt.conf.d/99proxy
 Acquire::ftp::Proxy "$proxy";
 Acquire::http::Proxy "$proxy";
 Acquire::https::Proxy "$proxy";
@@ -46,6 +46,11 @@ main () {
       echo "> setting APT proxy..."
       install_to_apt "$proxy"
     fi
+
+    echo "> done!"
+  else
+    echo "> aborted"
+    exit 1
   fi
 }
 
