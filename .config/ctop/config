@@ -1,0 +1,9 @@
+[options]
+  filterStr = ""
+  sortField = "cpu"
+
+[toggles]
+  allContainers = false
+  enableHeader = false
+  scaleCpu = true
+  sortReversed = false
