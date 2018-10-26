@@ -53,73 +53,82 @@ def fetch_user_keys(username):
 
     return keys
 
+def main():
+    # parse the commandline
+    if len(sys.argv) >= 2:
+        for i in range(1, len(sys.argv)):
+            user = sys.argv[i]
 
-# parse the commandline
-if len(sys.argv) >= 2:
-    for i in range(1, len(sys.argv)):
-        user = sys.argv[i]
+            if RE_VALID_USER.match(user):
+                GITHUB_USERS.append(user)
+            else:
+                log('invalid username "{}": will not be fetched'.format(user), type='warn')
+    else:
+        log('usage: import-ghkeys <username> <username2> ... <usernameN>', type='error')
+        exit(1)
 
-        if RE_VALID_USER.match(user):
-            GITHUB_USERS.append(user)
-        else:
-            log('invalid username "{}": will not be fetched'.format(user), type='warn')
-else:
-    log('usage: import-ghkeys <username> <username2> ... <usernameN>', type='error')
-    exit(1)
+    # gather keys for each user
+    for u in GITHUB_USERS:
+        try:
+            keyset = fetch_user_keys(u)
+            if len(keyset) > 0:
+                for key in keyset:
+                    SSH_KEYS.append(key)
+                log('fetched {} key{} for user "{}"'.format(len(keyset),
+                                                            's' if len(keyset) > 1 else '',
+                                                            u))
+        except Exception as e:
+            log(str(e), type='error')
 
-# gather keys for each user
-for u in GITHUB_USERS:
+    # error handling if there are no results
+    if len(SSH_KEYS) < 1:
+        log("no keys were fetched!", type='error')
+        exit(2)
+
+    # user confirmation
+    log('fetched {} key{} in total!'.format(len(SSH_KEYS), ('s' if len(SSH_KEYS) > 1 else '')), type='info')
+    go = False
+    while not go:
+        log('install keys for user "{}"? [y/N]: '.format(os.getenv('USER')),
+            type='question')
+        response = str(input()).lower().strip()
+
+        if response == 'y':
+            go = True
+        elif response == 'n':
+            exit(3)
+
+    # check for .ssh directory
+    if not os.path.exists(SSH_PATH):
+        try:
+            os.makedirs(SSH_PATH)
+            log('created directory "{}"'.format(SSH_PATH), type='info')
+        except:
+            log('cannot create directory "{}"!'.format(SSH_PATH), type='info')
+            exit(4)
+
+    # append all gathered keys to the authorized_keys file
+    log('installing keys...', type='info')
+    mode = 'a'
+    if not os.path.exists(AUTHORIZED_KEYS_FILE):
+        mode = 'w'
+        log('creating authorized_keys file...', type='info')
     try:
-        keyset = fetch_user_keys(u)
-        if len(keyset) > 0:
-            for key in keyset:
-                SSH_KEYS.append(key)
-            log('fetched {} key{} for user "{}"'.format(len(keyset),
-                                                        's' if len(keyset) > 1 else '',
-                                                        u))
-    except Exception as e:
-        log(str(e), type='error')
-
-# error handling if there are no results
-if len(SSH_KEYS) < 1:
-    log("no keys were fetched!", type='error')
-    exit(2)
-
-# user confirmation
-log('fetched {} key{} in total!'.format(len(SSH_KEYS), ('s' if len(SSH_KEYS) > 1 else '')), type='info')
-go = False
-while not go:
-    log('install keys for user "{}"? [y/N]: '.format(os.getenv('USER')),
-        type='question')
-    response = str(input()).lower().strip()
-
-    if response == 'y':
-        go = True
-    elif response == 'n':
-        exit(3)
-
-# check for .ssh directory
-if not os.path.exists(SSH_PATH):
-    try:
-        os.makedirs(SSH_PATH)
-        log('created directory "{}"'.format(SSH_PATH), type='info')
+        file = open(AUTHORIZED_KEYS_FILE, mode)
+        for key in SSH_KEYS:
+            file.write('{}\n'.format(key))
+        file.close()
+        log('done!')
     except:
-        log('cannot create directory "{}"!'.format(SSH_PATH), type='info')
-        exit(4)
-
-# append all gathered keys to the authorized_keys file
-log('installing keys...', type='info')
-mode = 'a'
-if not os.path.exists(AUTHORIZED_KEYS_FILE):
-    mode = 'w'
-    log('creating authorized_keys file...', type='info')
-try:
-    file = open(AUTHORIZED_KEYS_FILE, mode)
-    for key in SSH_KEYS:
-        file.write('{}\n'.format(key))
-    file.close()
-    log('done!')
-except:
-    log('cannot write to file!', type='error')
-    exit(5)
+        log('cannot write to file!', type='error')
+        exit(5)
+ 
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        exit(7)
+    except Exception:
+        log('unknown error!', type='error')
+        exit(6)
 
