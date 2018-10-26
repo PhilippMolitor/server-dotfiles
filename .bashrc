@@ -30,9 +30,20 @@ HISTSIZE=10000
 SAVEHIST=10000
 
 
-##########
-# Prompt #
-##########
+#################
+# PATH variable #
+#################
+
+PRIVATE_BIN_PATH="${HOME}/.bin"
+
+if [[ -d $PRIVATE_BIN_PATH ]] && [[ ":$PATH:" != *":$PRIVATE_BIN_PATH:"* ]]; then
+  export PATH="${PRIVATE_BIN_PATH}:${PATH}"
+fi
+
+
+#################
+# Custom prompt #
+#################
 
 PROMPT_COMMAND=__render_prompt
 
@@ -45,7 +56,7 @@ __render_prompt () {
   
   # exit code
   PS1+='['
-  if [[ "$ecode" == "0" ]]; then
+  if [[ $ecode == "0" ]]; then
     PS1+='\[\033[32m\]'
     PS1+=$' \xe2\x9c\x93 '
   else
@@ -63,21 +74,25 @@ __render_prompt () {
   # pwd (abbreviated)
   PS1+="\[\e[95m\]"
   PS1+="$(
-    p="${PWD#${HOME}}"
-    [[ "${PWD}" != "${p}" ]] && printf "~"
-
-    IFS=/
-
-    for d in ${p:1}; do
-      [[ "${d:0:1}" == "." ]] && printf "/${d:0:2}" || printf "/${d:0:1}"
-    done
-
-    [[ "${d:0:1}" == "." ]] && printf "${d:2}" || printf "${d:1}"
+    if [[ $PWD = / ]]; then
+      printf '/'
+    else
+      p="${PWD#${HOME}}"
+      
+      [[ $PWD != $p ]] && printf "~"
+  
+      IFS=/
+      for d in ${p:1}; do
+        [[ ${d:0:1} == "." ]] && printf "/${d:0:2}" || printf "/${d:0:1}"
+      done
+  
+      [[ ${d:0:1} == "." ]] && printf "${d:2}" || printf "${d:1}"
+    fi
   )"
   PS1+='\[\e[00m\]'
 
-  # prompt
-  if [ "$UID" -eq "0" ]; then
+  # privilege
+  if [[ $UID == "0" ]]; then
     PS1+='# '
   else
     PS1+='$ '
@@ -89,13 +104,10 @@ __render_prompt () {
 # Aliases #
 ###########
 
-# colorization
+# ls shortcuts
 alias ls='ls --color=auto'
-alias ll='ls -lhF'
-alias la='ls -lahF'
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
+alias ll='ls -lh'
+alias la='ls -lah'
 
 # in case someone fucked up again... (me)
 alias fuck='sudo env "PATH=$PATH" $(fc -ln -1)'
@@ -120,15 +132,4 @@ dotconf () {
 
   git --git-dir=$cdir --work-tree=$HOME/ "$@"
 }
-
-
-#################
-# PATH variable #
-#################
-
-PRIVATE_BIN_PATH="${HOME}/.bin"
-
-if [[ -d $PRIVATE_BIN_PATH ]] && [[ ":$PATH:" != *":$PRIVATE_BIN_PATH:"* ]]; then
-  export PATH="${PRIVATE_BIN_PATH}:${PATH}"
-fi
 
