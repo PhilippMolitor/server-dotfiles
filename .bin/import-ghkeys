@@ -49,7 +49,7 @@ def fetch_user_keys(username):
             else:
                 raise Exception('cannot parse data for user "{}"'.format(username))
 
-        raise Exception('cannot fetching data for user "{}"!'.format(username))
+        raise Exception('failed to fetch data for user "{}"!'.format(username))
 
     return keys
 
@@ -62,9 +62,9 @@ if len(sys.argv) >= 2:
         if RE_VALID_USER.match(user):
             GITHUB_USERS.append(user)
         else:
-            log('invalid user "{}": will not be fetched'.format(user), type='warn')
+            log('invalid username "{}": will not be fetched'.format(user), type='warn')
 else:
-    log('please supply a list of users to be added to the authorized_keys list!', type='error')
+    log('usage: import-ghkeys <username> <username2> ... <usernameN>', type='error')
     exit(1)
 
 # gather keys for each user
