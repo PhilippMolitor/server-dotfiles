@@ -11,6 +11,7 @@ set number
 set relativenumber
 set showmatch
 set wrap
+set showbreak=>>\ \ 
 set cursorline
 set ignorecase
 set incsearch
