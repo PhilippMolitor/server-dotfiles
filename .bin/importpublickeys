@@ -64,19 +64,20 @@ def main():
             else:
                 log('invalid username "{}": will not be fetched'.format(user), type='warn')
     else:
-        log('usage: import-ghkeys <username> <username2> ... <usernameN>', type='error')
+        log('usage: {} <username> <username2> ... <usernameN>'.format(os.path.basename(sys.argv[0])),
+            type='error')
         exit(1)
 
     # gather keys for each user
-    for u in GITHUB_USERS:
+    for user in GITHUB_USERS:
         try:
-            keyset = fetch_user_keys(u)
+            keyset = fetch_user_keys(user)
             if len(keyset) > 0:
                 for key in keyset:
                     SSH_KEYS.append(key)
                 log('fetched {} key{} for user "{}"'.format(len(keyset),
                                                             's' if len(keyset) > 1 else '',
-                                                            u))
+                                                            user))
         except Exception as e:
             log(str(e), type='error')
 
@@ -88,8 +89,9 @@ def main():
     # user confirmation
     log('fetched {} key{} in total!'.format(len(SSH_KEYS), ('s' if len(SSH_KEYS) > 1 else '')), type='info')
     go = False
+
     while not go:
-        log('install keys for user "{}"? [y/N]: '.format(os.getenv('USER')),
+        log('install keys for user "{}"? [y/n]: '.format(os.getenv('USER')),
             type='question')
         response = str(input()).lower().strip()
 
