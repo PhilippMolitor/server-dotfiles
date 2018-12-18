@@ -104,6 +104,11 @@ __render_prompt () {
 # Aliases #
 ###########
 
+# vim all the things
+if [[ -x "$(command -v vim)" ]]; then
+  alias vi='vim'
+fi
+
 # ls shortcuts
 alias ls='ls --color=auto'
 alias ll='ls -lh'
