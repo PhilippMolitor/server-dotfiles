@@ -110,9 +110,16 @@ if [[ -x "$(command -v vim)" ]]; then
 fi
 
 # ls shortcuts
-alias ls='ls --color=auto'
-alias ll='ls -lh'
-alias la='ls -lah'
+if [[ -x "$(command -v exa)" ]]; then
+  alias ls="exa --header --extended --git --group --group-directories-first --color-scale --color=always"
+  alias lm="exa --header --long --group --sort=modified --reverse --color always --color-scale"
+  alias lt="exa --long --tree --git-ignore"
+else
+  alias ls='ls -h --color=auto'
+fi
+
+alias ll='ls -l'
+alias la='ls -la'
 
 # in case someone fucked up again... (me)
 alias fuck='sudo env "PATH=$PATH" $(fc -ln -1)'
