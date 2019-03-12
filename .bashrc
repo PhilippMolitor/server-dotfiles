@@ -107,6 +107,8 @@ __render_prompt () {
 # vim all the things
 if [[ -x "$(command -v vim)" ]]; then
   alias vi='vim'
+  export EDITOR="vim"
+  export VISUAL="vim"
 fi
 
 # ls shortcuts
