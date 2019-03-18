@@ -15,6 +15,8 @@ set showbreak=>>\ \
 set cursorline
 set ignorecase
 set incsearch
+set gdefault
+set path+=**
 syntax on
 
 " colorscheme
@@ -41,6 +43,14 @@ let g:highlightedyank_highlight_duration = 3000
 
 " write with root privileges
 command W :execute ':silent w !sudo tee % > /dev/null' | :edit!
+
+" literally next/prev. line (even with wrapped lines)
+nnoremap j gj
+nnoremap k gk
+
+" switch to next/prev. buffer with tab/shift-tab
+nnoremap <silent> <Tab> :bnext<CR>
+nnoremap <silent> <S-Tab> :bprevious<CR>
 
 " restore cursor position
 autocmd BufReadPost *
