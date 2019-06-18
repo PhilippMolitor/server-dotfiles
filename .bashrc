@@ -117,7 +117,7 @@ if [[ -x "$(command -v exa)" ]]; then
   alias lm="exa --header --long --group --sort=modified --reverse --color always --color-scale"
   alias lt="exa --long --tree --git-ignore"
 else
-  alias ls='ls -h --color=auto'
+  alias ls='ls --group-directories-first -h --color=auto'
 fi
 
 alias ll='ls -l'
