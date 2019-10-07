@@ -123,6 +123,13 @@ fi
 alias ll='ls -l'
 alias la='ls -la'
 
+# docker-compose
+alias dc="docker-compose"
+alias dc-reboot="docker-compose down && docker-compose up -d"
+
+# git
+alias gitlog="git log --graph --oneline --decorate --all"
+
 # in case someone fucked up again... (me)
 alias fuck='sudo env "PATH=$PATH" $(fc -ln -1)'
 
