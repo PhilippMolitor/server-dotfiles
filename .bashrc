@@ -154,3 +154,9 @@ dotconf () {
   git --git-dir=$cdir --work-tree=$HOME/ "$@"
 }
 
+
+###################
+# Update dotfiles #
+###################
+(dotconf pull >/dev/null 2>&1 &)
+
