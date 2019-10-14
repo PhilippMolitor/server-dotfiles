@@ -113,7 +113,7 @@ fi
 
 # ls shortcuts
 if [[ -x "$(command -v exa)" ]]; then
-  alias ls="exa --header --extended --git --group --group-directories-first --color-scale --color=always"
+  alias ls="exa --header --git --group --group-directories-first --color-scale --color=always"
   alias lm="exa --header --long --group --sort=modified --reverse --color always --color-scale"
   alias lt="exa --long --tree --git-ignore"
 else
