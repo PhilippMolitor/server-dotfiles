@@ -125,7 +125,8 @@ alias la='ls -la'
 
 # docker-compose
 alias dc="docker-compose"
-alias dc-reboot="docker-compose down && docker-compose up -d"
+alias dcr="docker-compose down && docker-compose up -d"
+alias dcpu="docker-compose pull && docker-compose up -d"
 
 # git
 alias gitlog="git log --graph --oneline --decorate --all"
